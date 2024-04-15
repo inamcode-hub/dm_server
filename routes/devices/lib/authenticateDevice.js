@@ -1,17 +1,22 @@
 const jwt = require('jsonwebtoken');
+const url = require('url');
+const wsLogger = require('../../../lib/loggers/wsLogger');
 
 
-
-
-const sendMessageAndDestroy = (socket, message) => {
+const terminateWithError = (socket, message, ipAddress) => {
+    wsLogger.error(`Error in authenticateDevice.js- Message: ${message}. IP address: ${ipAddress}`);
     socket.write(`HTTP/1.1 401 Unauthorized\r\nContent-Type: text/plain\r\n\r\n${message}`);
     socket.destroy();
 };
 
-const authenticateDevice = (token, socket, callback) => {
+const authenticateDevice = (req, socket, callback) => {
+    const { query } = url.parse(req.url, true);
+    const token = query.token;
+
+    const ipAddress = req.connection.remoteAddress;
+
     if (!token) {
-        console.log('No token provided');
-        sendMessageAndDestroy(socket, 'Error: No token provided.');
+        terminateWithError(socket, 'No token provided.', ipAddress);
         return;
     }
 
@@ -20,14 +25,11 @@ const authenticateDevice = (token, socket, callback) => {
             const errorMessage = err instanceof jwt.TokenExpiredError ?
                 `Token expired at: ${err.expiredAt}` :
                 'Invalid token';
-            console.error(errorMessage);
-            sendMessageAndDestroy(socket, errorMessage);
+            terminateWithError(socket, errorMessage, ipAddress);
             return;
         }
         if (!decoded.deviceId || !decoded.DeviceModel) {
-            const errorMessage = 'Token missing required claims';
-            console.error(errorMessage);
-            sendMessageAndDestroy(socket, errorMessage);
+            terminateWithError(socket, 'Invalid decoded token.', ipAddress);
             return;
         }
 

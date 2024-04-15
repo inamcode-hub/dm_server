@@ -1,9 +1,9 @@
 const WebSocket = require('ws');
-const url = require('url');
 const handleConnection = require('../../controllers/devices/connect/wsConnectionController');
 const handleDisconnection = require('../../controllers/devices/disconnect/wsDisconnectionController');
 const authenticateDevice = require('./lib/authenticateDevice');
 const setupHeartbeat = require('./lib/setupHeartbeat');
+const wsLogger = require('../../lib/loggers/wsLogger');
 
 const setupWebSocketRoute = (server) => {
     const wss = new WebSocket.Server({
@@ -11,10 +11,10 @@ const setupWebSocketRoute = (server) => {
     });
 
     server.on('upgrade', (req, socket, head) => {
-        const { query } = url.parse(req.url, true);
-        const token = query.token;
+        const ipAddress = req.connection.remoteAddress;
+        wsLogger.info(`Upgrade request from ${ipAddress}`);
 
-        authenticateDevice(token, socket, (decoded) => {
+        authenticateDevice(req, socket, (decoded) => {
             const { deviceId, deviceModel } = decoded;
 
 
