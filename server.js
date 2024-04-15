@@ -6,12 +6,12 @@ const express = require('express');
 const http = require('http');
 const morgan = require('morgan');
 const path = require('path');
-require('./lib/loggers/consoleLogger');
+
 
 // files required
-
+require('./lib/loggers/consoleLogger');
+require('./lib/token');
 const setupWebSocketRoute = require('./routes/devices/websocketRoute'); // Adjust the path as necessary
-const generateAndLogToken = require('./lib/token'); // Adjust the path as necessary
 const morganLogger = require('./lib/loggers/morganLogger');
 const app = express();
 const port = process.env.PORT || 3000;
@@ -43,6 +43,7 @@ app.get('*', (req, res) => {
 });
 // if no rout matches
 app.use((req, res) => {
+    console.log('Catch-all route called');
     res.status(404).json({ message: 'Route not found' });
 });
 // Set up WebSocket route
