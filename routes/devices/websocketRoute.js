@@ -23,12 +23,16 @@ const setupWebSocketRoute = (server) => {
                 ws.isAlive = true;
                 ws.deviceId = deviceId;
                 ws.deviceModel = deviceModel;
+                ws.ipAddress = ipAddress;
+
+
 
                 wss.emit('connection', ws, req);
                 ws.on('pong', () => {
                     console.log('Received pong from client');
                     ws.isAlive = true; // Set isAlive to true when a pong message is received
                 });
+
 
                 handleConnection(ws, req);
                 ws.on('message', (message) => {
