@@ -7,10 +7,12 @@ const http = require('http');
 const morgan = require('morgan');
 const path = require('path');
 
-
 // files required
+const sequelize = require('./db/dbConnect');
+require('./models/device');
 require('./lib/loggers/consoleLogger');
 require('./lib/token');
+require('./lib/tasks/historyPartition')
 const setupWebSocketRoute = require('./routes/devices/websocketRoute'); // Adjust the path as necessary
 const morganLogger = require('./lib/loggers/morganLogger');
 const app = express();
@@ -46,10 +48,17 @@ app.use((req, res) => {
     console.log('Catch-all route called');
     res.status(404).json({ message: 'Route not found' });
 });
+
+
+// Start the server 
+
+sequelize.sync().then(() => {
+    server.listen(port, () => {
+        console.log(`Server started on port ${port}`);
+    });
+});
+
+
 // Set up WebSocket route
 setupWebSocketRoute(server);
 
-// Start the server
-server.listen(port, () => {
-    console.log(`Server started on port ${port}`);
-});
