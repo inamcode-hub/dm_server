@@ -28,7 +28,7 @@ const authenticateDevice = (req, socket, callback) => {
             terminateWithError(socket, errorMessage, ipAddress);
             return;
         }
-        if (!decoded.deviceId || !decoded.DeviceModel) {
+        if (!decoded.deviceId || !decoded.deviceModel) {
             terminateWithError(socket, 'Invalid decoded token.', ipAddress);
             return;
         }

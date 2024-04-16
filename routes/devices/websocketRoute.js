@@ -15,7 +15,7 @@ const setupWebSocketRoute = (server) => {
         wsLogger.info(`Upgrade request from ${ipAddress}`);
 
         authenticateDevice(req, socket, (decoded) => {
-            const { deviceId, deviceModel } = decoded;
+            const { deviceId, deviceModel, locationLatitude, locationLongitude, firmwareVersion } = decoded;
 
 
             wss.handleUpgrade(req, socket, head, (ws) => {
@@ -24,12 +24,16 @@ const setupWebSocketRoute = (server) => {
                 ws.deviceId = deviceId;
                 ws.deviceModel = deviceModel;
                 ws.ipAddress = ipAddress;
+                ws.locationLatitude = locationLatitude;
+                ws.locationLongitude = locationLongitude;
+                ws.firmwareVersion = firmwareVersion
 
 
 
                 wss.emit('connection', ws, req);
                 ws.on('pong', () => {
-                    console.log('Received pong from client');
+
+                    wsLogger.info(`Received pong from ${ws.deviceId}`);
                     ws.isAlive = true; // Set isAlive to true when a pong message is received
                 });
 
