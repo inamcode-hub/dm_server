@@ -13,7 +13,8 @@ require('./models/device');
 require('./lib/loggers/consoleLogger');
 require('./lib/token');
 require('./lib/tasks/historyPartition')
-const setupWebSocketRoute = require('./routes/devices/websocketRoute'); // Adjust the path as necessary
+const { setupWebSocketRoute } = require('./routes/devices/websocketRoute');
+
 const morganLogger = require('./lib/loggers/morganLogger');
 const app = express();
 const port = process.env.PORT || 3000;
