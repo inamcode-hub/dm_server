@@ -16,11 +16,12 @@ const handleConnection = async (ws, req) => {
         if (device) {
             // update the device status to online
             await Device.update({ isOnline, ipAddress, locationLatitude, locationLongitude }, { where: { deviceId } });
+            wsLogger.info(`Device ${deviceId} is now online.`);
         }
         else {
             // create a new device in the database
             await Device.create({ deviceId, deviceModel, isOnline, ipAddress, locationLatitude, locationLongitude });
-
+            wsLogger.info(`Device ${deviceId} is now online fresh register.`);
         }
 
     } catch (error) {
@@ -29,7 +30,7 @@ const handleConnection = async (ws, req) => {
 
     }
 
-    wsLogger.info(`Device ${deviceId} connected with IP address ${ipAddress}`);
+
 };
 
 module.exports = handleConnection;
