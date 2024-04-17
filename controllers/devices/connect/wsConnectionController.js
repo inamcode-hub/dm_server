@@ -5,7 +5,7 @@ const Device = require('../../../models/device');
 
 
 
-const handleConnection = async (ws, req) => {
+const handleConnection = async (ws) => {
     const isOnline = true;
     const { deviceId, deviceModel, ipAddress, locationLatitude, locationLongitude } = ws;
 

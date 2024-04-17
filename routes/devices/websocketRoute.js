@@ -38,7 +38,7 @@ const setupWebSocketRoute = (server) => {
                 });
 
 
-                handleConnection(ws, req);
+                handleConnection(ws);
                 ws.on('message', (message) => {
                     console.log(`Received message => ${message}`);
                 });
